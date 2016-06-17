@@ -11,15 +11,16 @@ namespace Quiron.LojaVirtual.Web.Controllers
     public class VitrineController : Controller
     {
         private ProdutosRepositorio _repositorio;
-        public int produtosPorPagina = 3;
+        public int produtosPorPagina = 8;
         // GET: Vitrine
-        public ActionResult ListaProdutos(int pagina = 1)
+        public ActionResult ListaProdutos(string categoria, int pagina = 1)
         {
             _repositorio = new ProdutosRepositorio();
 
             ProdutosViewModel model = new ProdutosViewModel
             {
                 Produtos = _repositorio.Produtos
+                .Where(p => categoria == null || p.categoria == categoria)
                     .OrderBy(p => p.descricao)
                     .Skip((pagina - 1) * produtosPorPagina)
                     .Take(produtosPorPagina),
@@ -31,7 +32,10 @@ namespace Quiron.LojaVirtual.Web.Controllers
                     ItensPorPagina = produtosPorPagina,
                     ItensTotal = _repositorio.Produtos.Count()
 
-                }
+                },
+
+                CategoriaAtual = categoria
+
             };
 
 
